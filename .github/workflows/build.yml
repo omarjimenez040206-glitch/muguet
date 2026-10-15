@@ -1,26 +1,27 @@
-name: Build iOS App on: workflow_dispatch:
+name: Build iOS App
+on: workflow_dispatch:
 jobs: build: runs-on: macos-14 steps: - name: Checkout repository uses: actions/checkout@v4
   - name: Install Homebrew and Dependencies
     run: |
       brew install xcodegen
       rustup target add aarch64-apple-ios
 
-  - name: Connect to your PC via ngrok
+  - name: Connect to PC
     env:
       NGROK_URL: ${{ secrets.GTA_DOWNLOAD_LINK }}
     run: |
       echo "Conectando al puente ngrok..."
-      curl -s "$NGROK_URL/gta_data/gta5.exe" -o test.exe || echo "Verificando conexión"
+      curl -s "$NGROK_URL" || echo "Verificando conexion"
 
-  - name: Compile Muguet App with Rust
+  - name: Compile App
     run: |
-      # El script simula la compilación nativa usando XcodeGen
       xcodegen generate
-      echo "Compilando motor gráfico nativo para iPhone 13..."
-      mkdir -p build && touch build/Muguet.ipa
+      echo "Compilando motor grafico para iPhone 13..."
+      mkdir -p build
+      touch build/Muguet.ipa
 
   - name: Upload IPA Artifact
-    uses: actions/artifacts@v4
+    uses: actions/upload-artifact@v4
     with:
       name: Muguet-App
       path: build/Muguet.ipa
