@@ -1,7 +1,7 @@
 name: Build iOS App
 on: workflow_dispatch:
 jobs: build: runs-on: macos-14 steps: - name: Checkout repository uses: actions/checkout@v4
-  - name: Install Homebrew and Dependencies
+  - name: Install Dependencies
     run: |
       brew install xcodegen
       rustup target add aarch64-apple-ios
@@ -16,11 +16,11 @@ jobs: build: runs-on: macos-14 steps: - name: Checkout repository uses: actions/
   - name: Compile App
     run: |
       xcodegen generate
-      echo "Compilando motor grafico para iPhone 13..."
+      echo "Compilando motor grafico..."
       mkdir -p build
       touch build/Muguet.ipa
 
-  - name: Upload IPA Artifact
+  - name: Upload IPA
     uses: actions/upload-artifact@v4
     with:
       name: Muguet-App
