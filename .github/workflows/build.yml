@@ -1,17 +1,6 @@
 name: Build iOS App
-
-on:
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: macos-14
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
-    with:
-      submodules: recursive
-
+on: workflow_dispatch:
+jobs: build: runs-on: macos-14 steps: - name: Checkout repository uses: actions/checkout@v4 with: submodules: recursive
   - name: Setup Rust
     uses: dtolnay/rust-toolchain@stable
     with:
