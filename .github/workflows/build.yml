@@ -1,30 +1,13 @@
-name: Build iOS App
-on: workflow_dispatch:
-jobs: build: runs-on: macos-14 steps: - name: Checkout repository uses: actions/checkout@v4 with: submodules: recursive
-  - name: Setup Rust
-    uses: dtolnay/rust-toolchain@stable
-    with:
-      targets: aarch64-apple-ios
+name: Build
 
-  - name: Install Dependencies
-    run: |
-      brew install xcodegen binaryen cmake
+on: [workflow_dispatch]
 
-  - name: Build IPA
-    run: |
-      chmod +x ./build.sh || true
-      if [ -f "./build.sh" ]; then
-        ./build.sh --release
-      else
-        xcodegen generate
-        xcodebuild -project Muguet.xcodeproj -scheme Muguet -configuration Release -sdk iphoneos archive -archivePath build/Muguet.xcarchive
-      fi
-
-  - name: Upload IPA Artifact
-    uses: actions/upload-artifact@v4
-    with:
-      name: Muguet-IPA
-      path: |
-        *.ipa
-        build/*.ipa
-        build/*.xcarchive
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: brew install xcodegen cmake
+      - name: Build project
+        run: xcodegen generate
