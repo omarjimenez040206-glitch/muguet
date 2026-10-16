@@ -9,3 +9,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+- name: Install Dependencies
+    run: |
+      brew install xcodegen cmake
+
+  - name: Generate Project
+    run: |
+      xcodegen generate
