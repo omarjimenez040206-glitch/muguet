@@ -1,13 +1,10 @@
-name: Build
+name: Build iOS App
+on: workflow_dispatch:
+jobs: build: runs-on: macos-14 steps: - name: Checkout Repository uses: actions/checkout@v4
+  - name: Install Dependencies
+    run: |
+      brew install xcodegen cmake
 
-on: [workflow_dispatch]
-
-jobs:
-  build:
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: brew install xcodegen cmake
-      - name: Build project
-        run: xcodegen generate
+  - name: Generate Project
+    run: |
+      xcodegen generate
