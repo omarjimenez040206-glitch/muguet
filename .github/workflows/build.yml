@@ -1,27 +1,36 @@
 name: Build iOS App
 on: workflow_dispatch:
-jobs: build: runs-on: macos-14 steps: - name: Checkout repository uses: actions/checkout@v4
+jobs: build: runs-on: macos-14
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+    with:
+      submodules: recursive
+
+  - name: Setup Rust
+    uses: dtolnay/rust-toolchain@stable
+    with:
+      targets: aarch64-apple-ios
+
   - name: Install Dependencies
     run: |
-      brew install xcodegen
-      rustup target add aarch64-apple-ios
+      brew install xcodegen binaryen cmake
 
-  - name: Connect to PC
-    env:
-      NGROK_URL: ${{ secrets.GTA_DOWNLOAD_LINK }}
+  - name: Build IPA
     run: |
-      echo "Conectando al puente ngrok..."
-      curl -s "$NGROK_URL" || echo "Verificando conexion"
+      chmod +x ./build.sh || true
+      if [ -f "./build.sh" ]; then
+        ./build.sh --release
+      else
+        xcodegen generate
+        xcodebuild -project Muguet.xcodeproj -scheme Muguet -configuration Release -sdk iphoneos archive -archivePath build/Muguet.xcarchive
+      fi
 
-  - name: Compile App
-    run: |
-      xcodegen generate
-      echo "Compilando motor grafico..."
-      mkdir -p build
-      touch build/Muguet.ipa
-
-  - name: Upload IPA
+  - name: Upload IPA Artifact
     uses: actions/upload-artifact@v4
     with:
-      name: Muguet-App
-      path: build/Muguet.ipa
+      name: Muguet-IPA
+      path: |
+        *.ipa
+        build/*.ipa
+        build/*.xcarchive
